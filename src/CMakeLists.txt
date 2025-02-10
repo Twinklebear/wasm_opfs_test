@@ -3,13 +3,7 @@ add_executable(wgpu_app main.cpp)
 set_target_properties(wgpu_app PROPERTIES CXX_STANDARD 20 CXX_STANDARD_REQUIRED
                                                           ON)
 
-option(USE_PROXY_TO_THREAD "Proxy to Pthread" OFF)
-
 if(EMSCRIPTEN)
-  if(USE_PROXY_TO_THREAD)
-    target_compile_definitions(wgpu_app PRIVATE -DUSE_PROXY_TO_THREAD=1)
-  endif()
-
   target_link_options(
     wgpu_app
     PRIVATE
@@ -21,8 +15,7 @@ if(EMSCRIPTEN)
     -sINVOKE_RUN=0
     -sWASMFS
     -pthread
-    $<$<BOOL:USE_PROXY_TO_THREAD>:-sPROXY_TO_PTHREAD>
-    -sPTHREAD_POOL_SIZE=4
+    -sPTHREAD_POOL_SIZE=2
     -sEXIT_RUNTIME=0
     # RelWithDebInfo build flags, enable separate dwarf to reduce wasm size
     $<$<CONFIG:RELWITHDEBINFO>:-gseparate-dwarf=${CMAKE_CURRENT_BINARY_DIR}/wgpu_app.dwarf>
